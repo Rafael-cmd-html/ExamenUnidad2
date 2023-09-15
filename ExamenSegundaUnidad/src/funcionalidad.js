@@ -130,6 +130,18 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
     limites.forEach((limite)=>{ //Creamos un foreach para dibujar el mapa
 
         limite.dibujarLimite();
+
+        if( jugador.posicion.y - jugador.radio + jugador.velocidad.y <= limite.posicion.y + limite.height && 
+            jugador.posicion.x + jugador.radio + jugador.velocidad.x >= limite.posicion.x &&
+            jugador.posicion.y + jugador.radio + jugador.velocidad.y >= limite.posicion.y && 
+            jugador.posicion.x - jugador.radio + jugador.velocidad.x <= limite.posicion.x + limite.width){
+
+
+                jugador.velocidad.x=0;
+                jugador.velocidad.y=0;
+               
+
+        }
     
     });
     

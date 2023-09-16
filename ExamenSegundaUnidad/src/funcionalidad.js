@@ -417,17 +417,19 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
             }
         }
     }
-    puntos.forEach((punto,i)=>{
+    for(let i= puntos.length-1; 0<i; i--){
+
+        const punto= puntos[i];
 
         punto.dibujarPunto();
         if(Math.hypot(punto.posicion.x - jugador.posicion.x, 
-            punto.posicion.y - jugador.posicion.y) < punto.radio + jugador.radio){
+             punto.posicion.y - jugador.posicion.y) < punto.radio + jugador.radio){
 
                 puntos.splice(i,1)
-
-            }
-
-    })
+    
+              }
+    }
+    
     limites.forEach((limite)=>{ //Creamos un foreach para dibujar el mapa
 
         limite.dibujarLimite();

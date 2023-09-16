@@ -5,6 +5,8 @@ const contexto= canvas.getContext('2d'); //Obtenemos el contexto del canvas
 canvas.width= window.innerWidth; //Le damos medidas al canvas de toda la ventana.
 canvas.height= window.innerHeight;
 
+const puntuacion=document.querySelector("#puntuacion")
+
 class Limites{
      //Creamos una clase limites para poner los topes del mapa
     static width =40;
@@ -114,6 +116,7 @@ const keys ={
     },
 }
 let lastKey= '';
+let puntaje= 0;
 const escenario=[
     ['1','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','2',],
     ['|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',],
@@ -426,6 +429,9 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
              punto.posicion.y - jugador.posicion.y) < punto.radio + jugador.radio){
 
                 puntos.splice(i,1)
+                puntaje+=10
+                puntuacion.innerHTML=puntaje;
+                
     
               }
     }

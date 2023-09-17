@@ -60,17 +60,46 @@ class Jugador{
     }
 }
 
-class Puntos{
+class Fantasmas{
 
     //Nuestra clase jugador será la encargada de dibujar y accionar a pacman
 
-    constructor({posicion}){ //Le pasamos como parametro dos objetos con propiedades
+    constructor({posicion , velocidad, color="red"}){ //Le pasamos como parametro dos objetos con propiedades
+
+        this.posicion = posicion;
+        this.velocidad = velocidad;
+        this.radio= 16;
+        this.color=color;
+        this.choquesAnt= [];
+
+    }
+    dibujarFantasma(){ //Función para pintar el pacman
+
+        contexto.beginPath();
+        contexto.arc(this.posicion.x ,this.posicion.y ,this.radio, 0, Math.PI*2);
+        contexto.fillStyle= this.color;
+        contexto.fill();
+        contexto.closePath();
+
+    }
+    actualizar(){ //La funcion actualizar nos permite redibujar el pacman con las posiciones
+                  //nuevas de velocidad
+
+        this.dibujarFantasma();
+        this.posicion.x += this.velocidad.x;
+        this.posicion.y += this.velocidad.y;
+
+    }
+}
+class Puntos{ //Función para generar los puntos en espacios en blancop
+
+    constructor({posicion}){ 
 
         this.posicion = posicion;
         this.radio= 3;
 
     }
-    dibujarPunto(){ //Función para pintar el pacman
+    dibujarPunto(){ 
 
         contexto.beginPath();
         contexto.arc(this.posicion.x ,this.posicion.y ,this.radio, 0, Math.PI*2);
@@ -81,6 +110,26 @@ class Puntos{
     }
 
 }
+class PowerUp{ //Función para generar los puntos en espacios en blancop
+
+    constructor({posicion}){ 
+
+        this.posicion = posicion;
+        this.radio= 10;
+
+    }
+    dibujarPowerUp(){ 
+
+        contexto.beginPath();
+        contexto.arc(this.posicion.x ,this.posicion.y ,this.radio, 0, Math.PI*2);
+        contexto.fillStyle= "white";
+        contexto.fill();
+        contexto.closePath();
+
+    }
+
+}
+const powerUps=[]
 const puntos=[];
 const limites=[]; //Creamos un array de limites
 const jugador = new Jugador({ //Creamos nuestro jugador con propiedades
@@ -98,7 +147,62 @@ const jugador = new Jugador({ //Creamos nuestro jugador con propiedades
     }
 
 })
+const fantasmas= [
+    new Fantasmas({
 
+        posicion:{
+
+            x: Limites.width * 6 + Limites.width / 2,
+            y: Limites.height + Limites.height / 2
+
+        },
+        velocidad:{
+
+            x:5,
+            y:0
+
+        }
+
+    }),
+    new Fantasmas({
+
+        posicion:{
+
+            x: Limites.width * 8 + Limites.width / 2,
+            y: Limites.height + Limites.height / 2
+
+        },
+        velocidad:{
+
+            x:5,
+            y:0
+
+        },
+        color: 'cyan'
+
+    }),
+    new Fantasmas({
+
+        posicion:{
+
+            x: Limites.width  + Limites.width / 2,
+            y: Limites.height *10 + Limites.height / 2
+
+        },
+        velocidad:{
+
+            x:5,
+            y:0
+
+        },
+        color: 'orange'
+
+    })
+]
+
+let audio= new Audio();
+audio.src="/sounds/pacman-song.mp3"
+audio.play();
 //Creamos un arreglo de objetos que nos permitirá saber que tecla está presionada
 //Esto para que la animacion sea fluida y no se vea afectada
 const keys ={
@@ -119,7 +223,7 @@ let lastKey= '';
 let puntaje= 0;
 const escenario=[
     ['1','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','2',],
-    ['|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',],
+    ['|','*',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','*','|',],
     ['|',' ','cL','cR',' ','1','cR',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','cL','2',' ','cL','cR',' ','|',],
     ['|',' ',' ',' ',' ','|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',' ',' ',' ',' ','|',],
     ['|',' ','cL','cR',' ','cB',' ','cL','-','-','-','-','-','-','-','-','cR',' ','cB',' ','cL','cR',' ','|',],
@@ -132,7 +236,7 @@ const escenario=[
     ['|',' ','cL','cR',' ',' ','',' ',' ','cL','-','-','-','-','cR',' ',' ',' ',' ',' ','cL','cR',' ','|',],
     ['|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',],
     ['|',' ','cL','-','-','cR',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','cL','-','-','cR',' ','|',],
-    ['|',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','|',],
+    ['|','*',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','*','|',],
     ['4','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','3',],
 ] //Creamos una matriz para representar nuestro escenario
 function crearImagen(src){
@@ -158,7 +262,7 @@ escenario.forEach((row, i) =>{
                             x: Limites.width*j, //Le damos el número 40 para que se le asigne ese ancho y largo
                             y: Limites.height*i // Y lo multiplicamos por las variables indice para dar la posicion
                         },
-                        imagen: crearImagen('/ExamenSegundaUnidad/images/pipeHorizontal.png')
+                        imagen: crearImagen('/images/pipeHorizontal.png')
                     })
                 );
             break;
@@ -169,7 +273,7 @@ escenario.forEach((row, i) =>{
                                x: Limites.width*j, //Le damos el número 40 para que se le asigne ese ancho y largo
                                y: Limites.height*i // Y lo multiplicamos por las variables indice para dar la posicion
                           },
-                          imagen: crearImagen('/ExamenSegundaUnidad/images/pipeVertical.png')
+                          imagen: crearImagen('/images/pipeVertical.png')
                   })
                     );
             break;
@@ -180,7 +284,7 @@ escenario.forEach((row, i) =>{
                                 x: Limites.width*j, //Le damos el número 40 para que se le asigne ese ancho y largo
                                    y: Limites.height*i // Y lo multiplicamos por las variables indice para dar la posicion
                              },
-                               imagen: crearImagen('/ExamenSegundaUnidad/images/pipeCorner1.png')
+                               imagen: crearImagen('/images/pipeCorner1.png')
                        })
                         );
             break;
@@ -191,7 +295,7 @@ escenario.forEach((row, i) =>{
                                       x: Limites.width*j, //Le damos el número 40 para que se le asigne ese ancho y largo
                                       y: Limites.height*i // Y lo multiplicamos por las variables indice para dar la posicion
                                    },
-                             imagen: crearImagen('/ExamenSegundaUnidad/images/pipeCorner2.png')
+                             imagen: crearImagen('/images/pipeCorner2.png')
                           })
                          );
             break;
@@ -202,7 +306,7 @@ escenario.forEach((row, i) =>{
                                        x: Limites.width*j, //Le damos el número 40 para que se le asigne ese ancho y largo
                                        y: Limites.height*i // Y lo multiplicamos por las variables indice para dar la posicion
                                   },
-                                    imagen: crearImagen('/ExamenSegundaUnidad/images/pipeCorner3.png')
+                                    imagen: crearImagen('/images/pipeCorner3.png')
                                 })
                              );
              break;
@@ -213,7 +317,7 @@ escenario.forEach((row, i) =>{
                                 x: Limites.width*j, //Le damos el número 40 para que se le asigne ese ancho y largo
                                 y: Limites.height*i // Y lo multiplicamos por las variables indice para dar la posicion
                                      },
-                                     imagen: crearImagen('/ExamenSegundaUnidad/images/pipeCorner4.png')
+                                     imagen: crearImagen('/images/pipeCorner4.png')
                                  })
                             );
             break;
@@ -224,7 +328,7 @@ escenario.forEach((row, i) =>{
                                      x: Limites.width*j, //Le damos el número 40 para que se le asigne ese ancho y largo
                                      y: Limites.height*i // Y lo multiplicamos por las variables indice para dar la posicion
                                     },
-                                     imagen: crearImagen('/ExamenSegundaUnidad/images/block.png')
+                                     imagen: crearImagen('/images/block.png')
                                  })
                              );
             break;
@@ -235,7 +339,7 @@ escenario.forEach((row, i) =>{
                                  x: Limites.width*j, //Le damos el número 40 para que se le asigne ese ancho y largo
                                  y: Limites.height*i // Y lo multiplicamos por las variables indice para dar la posicion
                                 },
-                                 imagen: crearImagen('/ExamenSegundaUnidad/images/capRight.png')
+                                 imagen: crearImagen('/images/capRight.png')
                              })
                          );
             break;
@@ -246,7 +350,7 @@ escenario.forEach((row, i) =>{
                                  x: Limites.width*j, //Le damos el número 40 para que se le asigne ese ancho y largo
                                  y: Limites.height*i // Y lo multiplicamos por las variables indice para dar la posicion
                                 },
-                                 imagen: crearImagen('/ExamenSegundaUnidad/images/capLeft.png')
+                                 imagen: crearImagen('/images/capLeft.png')
                              })
                          );
             break;
@@ -257,7 +361,7 @@ escenario.forEach((row, i) =>{
                                  x: Limites.width*j, //Le damos el número 40 para que se le asigne ese ancho y largo
                                  y: Limites.height*i // Y lo multiplicamos por las variables indice para dar la posicion
                                 },
-                                 imagen: crearImagen('/ExamenSegundaUnidad/images/capBottom.png')
+                                 imagen: crearImagen('/images/capBottom.png')
                              })
                          );
             break;
@@ -268,12 +372,22 @@ escenario.forEach((row, i) =>{
                                  x: Limites.width*j, //Le damos el número 40 para que se le asigne ese ancho y largo
                                  y: Limites.height*i // Y lo multiplicamos por las variables indice para dar la posicion
                                 },
-                                 imagen: crearImagen('/ExamenSegundaUnidad/images/capTop.png')
+                                 imagen: crearImagen('/images/capTop.png')
                              })
                          );
             break;
             case ' ':  
                 puntos.push(
+                    new Puntos({
+                        posicion:{
+                            x: Limites.width*j + Limites.width /2, //Le damos el número 40 para que se le asigne ese ancho y largo
+                            y: Limites.height*i + Limites.height /2 // Y lo multiplicamos por las variables indice para dar la posicion
+                            }
+                        })
+                    );
+            break;
+            case '*':  
+                powerUps.push(
                     new Puntos({
                         posicion:{
                             x: Limites.width*j + Limites.width /2, //Le damos el número 40 para que se le asigne ese ancho y largo
@@ -300,10 +414,10 @@ function choqueJugador({pacman,limite}){
         pacman.posicion.x - pacman.radio + pacman.velocidad.x <= limite.posicion.x + limite.width);
 
 }
-
+let idAnimacion
 function animacion(){ //Creamos una funcion que realizará el movimiento
 
-    requestAnimationFrame(animacion); //Usamos el requestAnimation para crear un loop infinito
+    idAnimacion=requestAnimationFrame(animacion); //Usamos el requestAnimation para crear un loop infinito
     contexto.clearRect(0,0, canvas.width,canvas.height); //Usamos clearRect para limpiar la pantalla
     //Crearemos un if para que se le añada la velocidad a cada tecla
     if(keys.w.pressed && lastKey=== 'w'){
@@ -420,7 +534,9 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
             }
         }
     }
-    for(let i= puntos.length-1; 0<i; i--){
+    
+
+    for(let i= puntos.length-1; 0<=i; i--){
 
         const punto= puntos[i];
 
@@ -431,11 +547,16 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
                 puntos.splice(i,1)
                 puntaje+=10
                 puntuacion.innerHTML=puntaje;
+
+                if(puntaje=== 2090){
+
+                    cancelAnimationFrame()
+
+                }
                 
     
               }
     }
-    
     limites.forEach((limite)=>{ //Creamos un foreach para dibujar el mapa
 
         limite.dibujarLimite();
@@ -451,11 +572,149 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
     
     });
     
+    
     jugador.actualizar(); //Usamos la funcion actualizar para que se repinte el pacman
 
     //Reseteamos las variables de velocidad a 0 para que no se salgan de cuadro jaja
     jugador.velocidad.x=0;
     jugador.velocidad.y=0;
+
+    fantasmas.forEach(fantasma => {
+
+        fantasma.actualizar();
+        if(Math.hypot(fantasma.posicion.x - jugador.posicion.x, 
+            fantasma.posicion.y - jugador.posicion.y) < fantasma.radio + jugador.radio){
+
+               cancelAnimationFrame(idAnimacion);
+               
+   
+             }
+        const choques=[];
+        limites.forEach(limite =>{
+
+            if(!choques.includes('derecha') && choqueJugador({
+
+                pacman: {
+
+                    ...fantasma, //Los tres puntos permiten obtener las propiedades del objeto del que se hace referencias
+                    velocidad:{
+
+                        x:5,
+                        y:0
+
+                    }
+
+                },
+                limite: limite
+
+            })){
+
+                choques.push('derecha');
+
+            }
+            if(!choques.includes('izquierda') && choqueJugador({
+
+                pacman: {
+
+                    ...fantasma, //Los tres puntos permiten obtener las propiedades del objeto del que se hace referencias
+                    velocidad:{
+
+                        x:-5,
+                        y:0
+
+                    }
+
+                },
+                limite: limite
+
+            })){
+
+                choques.push('izquierda');
+
+            }
+            if(!choques.includes('arriba') && choqueJugador({
+
+                pacman: {
+
+                    ...fantasma, //Los tres puntos permiten obtener las propiedades del objeto del que se hace referencias
+                    velocidad:{
+
+                        x:0,
+                        y:-5
+
+                    }
+
+                },
+                limite: limite
+
+            })){
+
+                choques.push('arriba');
+
+            }
+            if(!choques.includes('abajo') && choqueJugador({
+
+                pacman: {
+
+                    ...fantasma, //Los tres puntos permiten obtener las propiedades del objeto del que se hace referencias
+                    velocidad:{
+
+                        x:0,
+                        y:5
+
+                    }
+
+                },
+                limite: limite
+
+            })){
+
+                choques.push('abajo');
+
+            }
+
+        })
+        if(choques.length> fantasma.choquesAnt.length)
+        fantasma.choquesAnt= choques;
+
+        if(JSON.stringify(choques) !== JSON.stringify(fantasma.choquesAnt)){
+
+            if(fantasma.velocidad.x>0) fantasma.choquesAnt.push('derecha')
+            else if(fantasma.velocidad.x<0) fantasma.choquesAnt.push('izquierda')
+            else if(fantasma.velocidad.y<0) fantasma.choquesAnt.push('arriba')
+
+            const caminos= fantasma.choquesAnt.filter(choque =>{
+
+                return !choques.includes(choque);
+
+            })
+            const direccion= caminos [Math.floor(Math.random() * caminos.length)];
+
+            switch(direccion){
+
+                case 'abajo':
+                    fantasma.velocidad.y=5;
+                    fantasma.velocidad.x=0;
+                    break;
+                case 'arriba':
+                    fantasma.velocidad.y=-5;
+                    fantasma.velocidad.x=0;
+                    break;
+                case 'izquierda':
+                    fantasma.velocidad.y=0;
+                    fantasma.velocidad.x=-5;
+                    break;
+                case 'derecha':
+                    fantasma.velocidad.y=0;
+                    fantasma.velocidad.x=5;
+                        break;
+
+            }
+            fantasma.choquesAnt=[]
+
+        }
+
+    })
 
 }
 animacion(); //Mandamos llamar la animación

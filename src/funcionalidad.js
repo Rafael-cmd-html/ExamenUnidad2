@@ -158,7 +158,7 @@ const fantasmas= [
         },
         velocidad:{
 
-            x:5,
+            x:10,
             y:0
 
         }
@@ -174,7 +174,7 @@ const fantasmas= [
         },
         velocidad:{
 
-            x:5,
+            x:10,
             y:0
 
         },
@@ -599,7 +599,7 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
                     ...fantasma, //Los tres puntos permiten obtener las propiedades del objeto del que se hace referencias
                     velocidad:{
 
-                        x:5,
+                        x:10,
                         y:0
 
                     }
@@ -619,7 +619,7 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
                     ...fantasma, //Los tres puntos permiten obtener las propiedades del objeto del que se hace referencias
                     velocidad:{
 
-                        x:-5,
+                        x:-10,
                         y:0
 
                     }
@@ -640,7 +640,7 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
                     velocidad:{
 
                         x:0,
-                        y:-5
+                        y:-10
 
                     }
 
@@ -660,7 +660,7 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
                     velocidad:{
 
                         x:0,
-                        y:5
+                        y:10
 
                     }
 
@@ -693,20 +693,20 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
             switch(direccion){
 
                 case 'abajo':
-                    fantasma.velocidad.y=5;
+                    fantasma.velocidad.y=10;
                     fantasma.velocidad.x=0;
                     break;
                 case 'arriba':
-                    fantasma.velocidad.y=-5;
+                    fantasma.velocidad.y=-10;
                     fantasma.velocidad.x=0;
                     break;
                 case 'izquierda':
                     fantasma.velocidad.y=0;
-                    fantasma.velocidad.x=-5;
+                    fantasma.velocidad.x=-10;
                     break;
                 case 'derecha':
                     fantasma.velocidad.y=0;
-                    fantasma.velocidad.x=5;
+                    fantasma.velocidad.x=10;
                         break;
 
             }

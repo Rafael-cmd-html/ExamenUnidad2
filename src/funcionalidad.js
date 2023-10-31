@@ -5,10 +5,10 @@ const contexto= canvas.getContext('2d'); //Obtenemos el contexto del canvas
 canvas.width= window.innerWidth; //Le damos medidas al canvas de toda la ventana.
 canvas.height= window.innerHeight;
 
-const puntuacion=document.querySelector("#puntuacion")
+const puntuacion=document.querySelector("#puntuacion") //Planteamos una variable que aumentará cada que se coma un puntito
 
-class Limites{
-     //Creamos una clase limites para poner los topes del mapa
+class Limites{ //Creamos una clase limites para poner los topes del mapa
+     
     static width =40;
     static height=40;
 
@@ -30,9 +30,7 @@ class Limites{
 
     }
 }
-class Jugador{
-
-    //Nuestra clase jugador será la encargada de dibujar y accionar a pacman
+class Jugador{ //Nuestra clase jugador será la encargada de dibujar y accionar a pacman
 
     constructor({posicion , velocidad}){ //Le pasamos como parametro dos objetos con propiedades
 
@@ -60,11 +58,9 @@ class Jugador{
     }
 }
 
-class Fantasmas{
+class Fantasmas{//La clase fantasma, al ser un círculo, será basada en nuestra clase jugador
 
-    //Nuestra clase jugador será la encargada de dibujar y accionar a pacman
-
-    constructor({posicion , velocidad, color="red"}){ //Le pasamos como parametro dos objetos con propiedades
+    constructor({posicion , velocidad, color="red"}){ 
 
         this.posicion = posicion;
         this.velocidad = velocidad;
@@ -73,7 +69,7 @@ class Fantasmas{
         this.choquesAnt= [];
 
     }
-    dibujarFantasma(){ //Función para pintar el pacman
+    dibujarFantasma(){ 
 
         contexto.beginPath();
         contexto.arc(this.posicion.x ,this.posicion.y ,this.radio, 0, Math.PI*2);
@@ -82,8 +78,7 @@ class Fantasmas{
         contexto.closePath();
 
     }
-    actualizar(){ //La funcion actualizar nos permite redibujar el pacman con las posiciones
-                  //nuevas de velocidad
+    actualizar(){ 
 
         this.dibujarFantasma();
         this.posicion.x += this.velocidad.x;
@@ -91,7 +86,7 @@ class Fantasmas{
 
     }
 }
-class Puntos{ //Función para generar los puntos en espacios en blancop
+class Puntos{ //Clase para generar los puntos en espacios en blanco
 
     constructor({posicion}){ 
 
@@ -110,7 +105,7 @@ class Puntos{ //Función para generar los puntos en espacios en blancop
     }
 
 }
-class PowerUp{ //Función para generar los puntos en espacios en blancop
+class PowerUp{ //Está clase será para pintar los powerUps, basada en la clase Puntos -- TODO --
 
     constructor({posicion}){ 
 
@@ -129,8 +124,8 @@ class PowerUp{ //Función para generar los puntos en espacios en blancop
     }
 
 }
-const powerUps=[]
-const puntos=[];
+const powerUps=[];//Array de powerUps -- TODO --
+const puntos=[]; //Array de puntaje
 const limites=[]; //Creamos un array de limites
 const jugador = new Jugador({ //Creamos nuestro jugador con propiedades
     posicion: {
@@ -147,7 +142,9 @@ const jugador = new Jugador({ //Creamos nuestro jugador con propiedades
     }
 
 })
-const fantasmas= [
+const fantasmas= [ //Al igual que a nuestro jugador, a nuestros fantasmas igual
+
+    //Se crearán un total de 3, con diferente color
     new Fantasmas({
 
         posicion:{
@@ -191,7 +188,7 @@ const fantasmas= [
         },
         velocidad:{
 
-            x:5,
+            x:10,
             y:0
 
         },
@@ -200,9 +197,14 @@ const fantasmas= [
     })
 ]
 
-let audio= new Audio();
-audio.src="/sounds/pacman-song.mp3"
-audio.play();
+//Creación y asignación de variables de sonido
+let audioInicio= new Audio(); 
+let audioPuntos= new Audio();
+audioInicio.src="/sounds/Pac-man theme remix - By Arsenic1987.mp3"
+audioPuntos.src="/sounds/pacman-waka-waka.mp3"
+
+//Solo reproduciremos la canción ambiente al inicio
+audioInicio.play();
 //Creamos un arreglo de objetos que nos permitirá saber que tecla está presionada
 //Esto para que la animacion sea fluida y no se vea afectada
 const keys ={
@@ -547,6 +549,7 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
                 puntos.splice(i,1)
                 puntaje+=10
                 puntuacion.innerHTML=puntaje;
+                audioPuntos.play();
 
                 if(puntaje=== 2090){
 
@@ -586,6 +589,7 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
             fantasma.posicion.y - jugador.posicion.y) < fantasma.radio + jugador.radio){
 
                cancelAnimationFrame(idAnimacion);
+
                
    
              }
@@ -599,7 +603,7 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
                     ...fantasma, //Los tres puntos permiten obtener las propiedades del objeto del que se hace referencias
                     velocidad:{
 
-                        x:10,
+                        x:5,
                         y:0
 
                     }
@@ -619,7 +623,7 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
                     ...fantasma, //Los tres puntos permiten obtener las propiedades del objeto del que se hace referencias
                     velocidad:{
 
-                        x:-10,
+                        x:-5,
                         y:0
 
                     }
@@ -640,7 +644,7 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
                     velocidad:{
 
                         x:0,
-                        y:-10
+                        y:-5
 
                     }
 
@@ -660,7 +664,7 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
                     velocidad:{
 
                         x:0,
-                        y:10
+                        y:5
 
                     }
 
@@ -693,20 +697,20 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
             switch(direccion){
 
                 case 'abajo':
-                    fantasma.velocidad.y=10;
+                    fantasma.velocidad.y=5;
                     fantasma.velocidad.x=0;
                     break;
                 case 'arriba':
-                    fantasma.velocidad.y=-10;
+                    fantasma.velocidad.y=-5;
                     fantasma.velocidad.x=0;
                     break;
                 case 'izquierda':
                     fantasma.velocidad.y=0;
-                    fantasma.velocidad.x=-10;
+                    fantasma.velocidad.x=-5;
                     break;
                 case 'derecha':
                     fantasma.velocidad.y=0;
-                    fantasma.velocidad.x=10;
+                    fantasma.velocidad.x=5;
                         break;
 
             }

@@ -200,8 +200,12 @@ const fantasmas= [ //Al igual que a nuestro jugador, a nuestros fantasmas igual
 //Creación y asignación de variables de sonido
 let audioInicio= new Audio(); 
 let audioPuntos= new Audio();
+let audioMuerte= new Audio();
 audioInicio.src="/sounds/Pac-man theme remix - By Arsenic1987.mp3"
 audioPuntos.src="/sounds/pacman-waka-waka.mp3"
+audioMuerte.src="/sounds/pacman-5.mp3"
+audioInicio.loop=true;
+audioInicio.autoplay=true;
 
 //Solo reproduciremos la canción ambiente al inicio
 audioInicio.play();
@@ -551,9 +555,10 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
                 puntuacion.innerHTML=puntaje;
                 audioPuntos.play();
 
-                if(puntaje=== 2090){
+                if(puntaje=== 1500){
 
-                    cancelAnimationFrame()
+                    audioInicio.pause();
+                    cancelAnimationFrame(idAnimacion);
 
                 }
                 
@@ -589,6 +594,9 @@ function animacion(){ //Creamos una funcion que realizará el movimiento
             fantasma.posicion.y - jugador.posicion.y) < fantasma.radio + jugador.radio){
 
                cancelAnimationFrame(idAnimacion);
+
+               audioInicio.pause();
+               audioMuerte.play();
 
                
    

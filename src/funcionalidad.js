@@ -252,6 +252,7 @@ function crearImagen(src){
     return imagen;
 
 }
+//Hacemos un foreach para piuntar el escenario
 escenario.forEach((row, i) =>{ 
 
     //Creamos el foreach para el escenario obteniendo los simbolos y cambiandolos por el mapa
